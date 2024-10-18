@@ -31,7 +31,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install requests PyPDF2
+          pip install requests PyPDF2 pycryptodome
 
       - name: Run PDF search
         run: |
