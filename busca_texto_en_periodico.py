@@ -1,0 +1,69 @@
+import requests
+from PyPDF2 import PdfReader
+
+# Function to check API and search for the string in the PDF files with context
+def check_api_for_pdfs(api_url, search_string, context_lines=2):
+    try:
+        # Step 1: Send GET request to the API to retrieve the JSON data
+        response = requests.get(api_url)
+        
+        if response.status_code == 200:
+            data = response.json()  # Parse the JSON response
+            
+            # Check if "ok" is True and "objeto" array exists
+            if data.get("ok") and "objeto" in data:
+                pdfs = data["objeto"]  # Get the list of PDFs
+                
+                # Loop through each PDF object in the "objeto" array
+                for pdf_info in pdfs:
+                    pdf_url = pdf_info.get("perurl")  # Extract PDF URL
+                    pdf_file_name = pdf_info.get("perarchivofile")  # Extract file name
+                    
+                    # Step 2: Download the PDF
+                    pdf_response = requests.get(pdf_url)
+                    
+                    if pdf_response.status_code == 200:
+                        pdf_file_path = pdf_file_name
+                        with open(pdf_file_path, 'wb') as pdf_file:
+                            pdf_file.write(pdf_response.content)
+                        
+                        # Step 3: Read the PDF and extract text page by page
+                        reader = PdfReader(pdf_file_path)
+                        found = False  # Track if the string is found
+                        
+                        for page_num, page in enumerate(reader.pages, start=1):
+                            page_text = page.extract_text()
+                            lines = page_text.splitlines()  # Split text into lines
+
+                            # Step 4: Search for the string in the current page's text
+                            for i, line in enumerate(lines):
+                                if search_string.lower() in line.lower():
+                                    found = True
+                                    # Print the found string with context (before and after lines)
+                                    start_index = max(i - context_lines, 0)
+                                    end_index = min(i + context_lines + 1, len(lines))
+                                    
+                                    print(f'String "{search_string}" found in {pdf_file_name}, Page {page_num} at line {i}:')
+                                    for context_line in lines[start_index:end_index]:
+                                        print(context_line)
+                                    print("-" * 40)  # Divider after each result
+                                    break  # Stop searching after finding the string
+                        
+                        if not found:
+                            print(f'String "{search_string}" NOT found in {pdf_file_name}.')
+                    else:
+                        print(f"Failed to download PDF: {pdf_file_name}. Status code: {pdf_response.status_code}")
+            else:
+                print(f"API did not return valid data. Response: {data}")
+        else:
+            print(f"Failed to connect to API. Status code: {response.status_code}")
+    
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+# API URL and search string
+api_url = 'https://backperiodico.guanajuato.gob.mx/api/Periodico/BusquedaPeriodicoPublicacion/2024/209/null/null/null/0/0'
+search_string = 'Ruben'
+context_lines = 2  # Number of lines to show before and after the found string
+
+check_api_for_pdfs(api_url, search_string, context_lines)
