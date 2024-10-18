@@ -21,12 +21,13 @@ def check_api_for_pdfs(api_url, search_string, context_lines=2):
                 
                 # Loop through each PDF object in the "objeto" array
                 for pdf_info in pdfs:
-                    pdf_url = pdf_info.get("perurl")  # Extract PDF URL
+                    per_id = pdf_info.get("perid")  # Extract id periodico
                     pdf_file_name = pdf_info.get("perarchivofile")  # Extract file name
                     
                     # Step 2: Download the PDF
                     # Disable SSL verification in requests.get()
-                    pdf_response = requests.get(pdf_url, verify=False)
+                    pdf_download_url = 'https://backperiodico.guanajuato.gob.mx/api/Periodico/DescargarPeriodicoId/' + str(per_id)
+                    pdf_response = requests.get(pdf_download_url, verify=False)
                     
                     if pdf_response.status_code == 200:
                         pdf_file_path = pdf_file_name
@@ -69,7 +70,8 @@ def check_api_for_pdfs(api_url, search_string, context_lines=2):
 
 # API URL and search string
 api_url = 'https://backperiodico.guanajuato.gob.mx/api/Periodico/BusquedaPeriodicoPublicacion/2024/209/null/null/null/0/0'
-search_string = 'Ruben'
+# api_url = 'https://backperiodico.guanajuato.gob.mx/api/Periodico/BusquedaPeriodicoPublicacion/2024/210/null/null/null/0/0'
+search_string = 'Teresa'
 context_lines = 2  # Number of lines to show before and after the found string
 
 check_api_for_pdfs(api_url, search_string, context_lines)
