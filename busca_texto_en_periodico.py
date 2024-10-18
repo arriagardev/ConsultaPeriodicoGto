@@ -23,6 +23,8 @@ def check_api_for_pdfs(api_url, search_string, context_lines=2):
                 for pdf_info in pdfs:
                     per_id = pdf_info.get("perid")  # Extract id periodico
                     pdf_file_name = pdf_info.get("perarchivofile")  # Extract file name
+                    perfecha = pdf_info.get("perfecha")  # Extract date
+                    print(f"Procesando PDF: {pdf_file_name} - Fecha: {perfecha}")
                     
                     # Step 2: Download the PDF
                     # Disable SSL verification in requests.get()
