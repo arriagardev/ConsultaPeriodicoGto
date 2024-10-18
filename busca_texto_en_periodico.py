@@ -69,9 +69,14 @@ def check_api_for_pdfs(api_url, search_string, context_lines=2):
         print(f"An error occurred: {e}")
 
 # API URL and search string
-api_url = 'https://backperiodico.guanajuato.gob.mx/api/Periodico/BusquedaPeriodicoPublicacion/2024/209/null/null/null/0/0'
-# api_url = 'https://backperiodico.guanajuato.gob.mx/api/Periodico/BusquedaPeriodicoPublicacion/2024/210/null/null/null/0/0'
-search_string = 'Teresa'
+api_url = 'https://backperiodico.guanajuato.gob.mx/api/Periodico/BusquedaPeriodicoPublicacion/2024/210/null/null/null/0/0'
+search_string = 'Ruben'
 context_lines = 2  # Number of lines to show before and after the found string
 
+print(f"Búsqueda de cadena de texto: {search_string}")
+print("************************************")
+check_api_for_pdfs(api_url, search_string, context_lines)
+search_string = 'Teresa'
+print(f"Búsqueda de cadena de texto: {search_string}")
+print("************************************")
 check_api_for_pdfs(api_url, search_string, context_lines)
