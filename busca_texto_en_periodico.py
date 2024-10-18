@@ -1,11 +1,16 @@
 import requests
 from PyPDF2 import PdfReader
+import urllib3
+
+# Disable SSL warnings
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Function to check API and search for the string in the PDF files with context
 def check_api_for_pdfs(api_url, search_string, context_lines=2):
-    try:
+    try:        
         # Step 1: Send GET request to the API to retrieve the JSON data
-        response = requests.get(api_url)
+        # Disable SSL verification in requests.get()
+        response = requests.get(api_url, verify=False)        
         
         if response.status_code == 200:
             data = response.json()  # Parse the JSON response
@@ -20,7 +25,8 @@ def check_api_for_pdfs(api_url, search_string, context_lines=2):
                     pdf_file_name = pdf_info.get("perarchivofile")  # Extract file name
                     
                     # Step 2: Download the PDF
-                    pdf_response = requests.get(pdf_url)
+                    # Disable SSL verification in requests.get()
+                    pdf_response = requests.get(pdf_url, verify=False)
                     
                     if pdf_response.status_code == 200:
                         pdf_file_path = pdf_file_name
