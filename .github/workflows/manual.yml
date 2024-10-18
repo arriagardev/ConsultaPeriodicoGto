@@ -35,4 +35,4 @@ jobs:
 
       - name: Run PDF search
         run: |
-          python busca_texto_en_periodico.py "${{ github.event.inputs.search_string }}"
+          python busca_texto_en_periodico.py "${{ github.event.inputs.search_string }}" "${{ github.event.inputs.periodico_num }}"
