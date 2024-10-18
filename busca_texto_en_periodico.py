@@ -1,3 +1,4 @@
+import sys
 import requests
 from PyPDF2 import PdfReader
 import urllib3
@@ -72,13 +73,19 @@ def check_api_for_pdfs(api_url, search_string, context_lines=2):
 
 # API URL and search string
 api_url = 'https://backperiodico.guanajuato.gob.mx/api/Periodico/BusquedaPeriodicoPublicacion/2024/210/null/null/null/0/0'
+
 search_string = 'Ruben'
+if len(sys.argv) > 1:
+    print("Ejecución: python busca_text_en_periodico.py <texto_a_buscar>")
+    search_string = sys.argv[1]  # The search string passed as a command-line argument
+    sys.exit(1)    
+
 context_lines = 2  # Number of lines to show before and after the found string
 
 print(f"Búsqueda de cadena de texto: {search_string}")
 print("************************************")
 check_api_for_pdfs(api_url, search_string, context_lines)
-search_string = 'Teresa'
-print(f"Búsqueda de cadena de texto: {search_string}")
-print("************************************")
-check_api_for_pdfs(api_url, search_string, context_lines)
+# search_string = 'Teresa'
+# print(f"Búsqueda de cadena de texto: {search_string}")
+# print("************************************")
+# check_api_for_pdfs(api_url, search_string, context_lines)
