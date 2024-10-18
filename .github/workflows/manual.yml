@@ -1,22 +1,21 @@
 name: Manual workflow to search PDFs for string
 
-# Controls when the action will run. Workflow runs when manually triggered using the UI
-# or API.
 on:
   workflow_dispatch:
     # Inputs the workflow accepts.
     inputs:      
-      search_string:
-        # Friendly description to be shown in the UI instead of 'name'
-        description: 'String to search for in PDFs'
-        # Input has to be provided for the workflow to run
-        required: true
-        # Default value if no value is explicitly provided
+      search_string:        
+        description: 'String to search for in PDFs'      
+        required: true        
         default: 'Ruben'
-        # The data type of the input
+        type: string
+        
+      periodico_num:
+        description: 'Periodico number to search for PDFs'
+        required: true
+        default: '201'
         type: string
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:        
   search_pdfs:
     runs-on: ubuntu-latest

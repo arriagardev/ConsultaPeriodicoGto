@@ -71,16 +71,18 @@ def check_api_for_pdfs(api_url, search_string, context_lines=2):
     except Exception as e:
         print(f"An error occurred: {e}")
 
-# API URL and search string
-api_url = 'https://backperiodico.guanajuato.gob.mx/api/Periodico/BusquedaPeriodicoPublicacion/2024/210/null/null/null/0/0'
-
-print("Ejecución: python busca_text_en_periodico.py <texto_a_buscar>")
-# Check if search string is provided as a command-line argument, otherwise use a default value for local testing
-if len(sys.argv) < 2:
+print("Ejecución: python busca_text_en_periodico.py <texto_a_buscar> <periodico_num>")
+# Ensure two command-line arguments (search_string and periodico_num) are provided
+if len(sys.argv) < 3:
     search_string = 'Ruben'  # Default search term for local testing
+    periodico_num = 201
     print(f"No se encontró texto a buscar, usar por defecto: {search_string}")
 else:
     search_string = sys.argv[1]  # The search string passed as a command-line argument
+    periodico_num = sys.argv[2]  # The string passed as the periodico number in the endpoint url
+
+# Construct the API URL using the periodico_num parameter
+api_url = f'https://backperiodico.guanajuato.gob.mx/api/Periodico/BusquedaPeriodicoPublicacion/2024/{periodico_num}/null/null/null/0/0'
 
 context_lines = 2  # Number of lines to show before and after the found string
 
