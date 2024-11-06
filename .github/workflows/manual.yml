@@ -75,7 +75,7 @@ jobs:
 
       - name: Run PDF search
         run: |
-          python busca_texto_en_periodico.py "${{ github.event.inputs.search_string }}" "${{ steps.last_periodico.outputs.next_periodico }}"
+          python busca_texto_en_periodico.py "${{ github.event.inputs.search_string }}" "${{ steps.set_periodico.outputs.periodico_num }}"
 
       - name: Email search results
         uses: dawidd6/action-send-mail@v3
