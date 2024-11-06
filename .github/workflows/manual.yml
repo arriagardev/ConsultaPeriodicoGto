@@ -11,11 +11,10 @@ on:
         type: string
         
       periodico_num:
-        description: 'Periodico number to search for PDFs'
-        required: true
-        default: '201'
+        description: 'Periodico number to search for PDFs (leave empty to use auto-increment)'
+        required: false
         type: string
-
+        
       email_to:
         description: 'Email addresses to send results to (comma-separated)'
         required: true
@@ -45,16 +44,34 @@ jobs:
 
       - name: Get last successful periodico number
         id: last_periodico
+        if: ${{ github.event.inputs.periodico_num == '' }}
         run: |
-          # Get the value of the periodico_num input from the last successful run
-          last_run_periodico=$(curl -H "Accept: application/vnd.github+json" \
-                              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                              https://api.github.com/repos/${{ github.repository }}/actions/runs?event=workflow_dispatch | \
-                              jq -r '.workflow_runs[0].inputs.periodico_num')
+          # Get the API response for the last successful run
+          api_response=$(curl -H "Accept: application/vnd.github+json" \
+                          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                          https://api.github.com/repos/${{ github.repository }}/actions/runs?status=success&event=workflow_dispatch)
           
-          # Increment the periodico number for the next run
+          # Extract the last successful workflow run ID
+          last_run_id=$(echo $api_response | jq -r '.workflow_runs[0].id')
+          
+          # Use the workflow run ID to get the input parameters
+          run_details=$(curl -H "Accept: application/vnd.github+json" \
+                         -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                         https://api.github.com/repos/${{ github.repository }}/actions/runs/$last_run_id)
+          
+          # Extract and increment the last successful periodico_num value
+          last_run_periodico=$(echo $run_details | jq -r '.inputs.periodico_num')
           next_periodico=$((last_run_periodico + 1))
-          echo "::set-output name=next_periodico::$next_periodico"
+          echo "::set-output name=periodico_num::$next_periodico"                    
+
+      - name: Set periodico number
+        id: set_periodico
+        run: |
+          if [ -n "${{ github.event.inputs.periodico_num }}" ]; then
+            echo "::set-output name=periodico_num::${{ github.event.inputs.periodico_num }}"
+          else
+            echo "::set-output name=periodico_num::${{ steps.last_periodico.outputs.periodico_num }}"
+          fi
 
       - name: Run PDF search
         run: |
