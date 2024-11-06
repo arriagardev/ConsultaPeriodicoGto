@@ -9,6 +9,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 # Function to check API and search for the string in the PDF files with context
 def check_api_for_pdfs(api_url, search_string, context_lines=2):
     try:        
+        print("Inicia proceso de búsqueda.")
         # Step 1: Send GET request to the API to retrieve the JSON data
         # Disable SSL verification in requests.get()
         response = requests.get(api_url, verify=False)        
@@ -63,10 +64,12 @@ def check_api_for_pdfs(api_url, search_string, context_lines=2):
                             print(f'String "{search_string}" NOT found in {pdf_file_name}.')
                     else:
                         print(f"Failed to download PDF: {pdf_file_name}. Status code: {pdf_response.status_code}")
+                        print(f"Reason: {pdf_response.reason} | {pdf_response.text}")
             else:
                 print(f"API did not return valid data. Response: {data}")
         else:
             print(f"Failed to connect to API. Status code: {response.status_code}")
+            print(f"Reason: {response.reason} | {response.text}")
     
     except Exception as e:
         print(f"An error occurred: {e}")
@@ -87,5 +90,6 @@ api_url = f'https://backperiodico.guanajuato.gob.mx/api/Periodico/BusquedaPeriod
 context_lines = 2  # Number of lines to show before and after the found string
 
 print(f"Búsqueda de cadena de texto: {search_string}")
+print(f"API URL: {api_url}")
 print("************************************")
 check_api_for_pdfs(api_url, search_string, context_lines)
