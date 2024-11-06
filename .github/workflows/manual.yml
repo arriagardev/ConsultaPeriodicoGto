@@ -18,7 +18,7 @@ on:
       email_to:
         description: 'Email addresses to send results to (comma-separated)'
         required: true
-        default: 'arriagar@gmail.com,breangelita@gmail.com'
+        default: 'arriagar@gmail.com'
         type: string
 
   schedule:
